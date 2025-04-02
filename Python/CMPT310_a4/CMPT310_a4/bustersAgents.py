@@ -10,6 +10,8 @@
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
+#I consulted external resources, including ChatGPT, 
+#to support my understanding and implementation of this assignment.
 
 
 import util
@@ -144,3 +146,32 @@ class GreedyBustersAgent(BustersAgent):
             [beliefs for i, beliefs in enumerate(self.ghostBeliefs)
              if livingGhosts[i+1]]
         "*** YOUR CODE HERE ***"
+        # Initialize variables to track the closest ghost info
+        closestGhostPos = None
+        closestGhostDist = float("inf")
+
+        # Find the most likely position of each living ghost
+        ghostMostLikelyPositions = [dist.argMax() for dist in livingGhostPositionDistributions]
+
+        # Determine which ghost is closest to Pacman
+        for ghostPos in ghostMostLikelyPositions:
+            distance = self.distancer.getDistance(pacmanPosition, ghostPos)
+            if distance < closestGhostDist:
+                closestGhostDist = distance
+                closestGhostPos = ghostPos
+
+        # Choose the action that brings Pacman closest to that ghost
+        bestAction = None
+        bestActionDist = float("inf")
+        for action in legal:
+            successor = Actions.getSuccessor(pacmanPosition, action)
+            distToGhost = self.distancer.getDistance(successor, closestGhostPos)
+            if distToGhost < bestActionDist:
+                bestActionDist = distToGhost
+                bestAction = action
+
+        return bestAction
+
+
+
+
